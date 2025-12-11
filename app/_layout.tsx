@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, ImageBackground } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { Stack } from 'expo-router';
 import { PaperProvider } from 'react-native-paper';
 import { ContextoSessao } from '../contextoSessao';
 import { TSessao } from '../types/TSession';
-import imagemFundo from '../assets/bg-ia-generated.png';
 
 const RootLayout = () => {
     const [sessao, setSessao] = useState({} as TSessao);
@@ -13,31 +12,24 @@ const RootLayout = () => {
         <PaperProvider>
             <ContextoSessao.Provider value={{ sessao: sessao, setSessao: setSessao }}>
                 <View style={styles.container}>
-                    <ImageBackground
-                        source={imagemFundo}
-                        resizeMode="cover"
-                        style={styles.imageBackground}
-                    >
-                        <View style={{ flex: 1, width: '100%' }}>
-                            <Stack
-                                screenOptions={{
-                                    headerShown: false,
+                    <View style={{ flex: 1, width: '100%' }}>
+                        <Stack
+                            screenOptions={{
+                                headerShown: false,
+                            }}
+                            initialRouteName="login"
+                        >
+                            <Stack.Screen name="login" />
+                            <Stack.Screen
+                                name="postagem"
+                                options={{
+                                    headerShown: true,
+                                    title: 'Nova Postagem'
                                 }}
-                                initialRouteName="login"
-                            >
-                                <Stack.Screen name="login" />
-                                <Stack.Screen
-                                    name="postagem"
-                                    options={{
-                                        headerShown: true,
-                                        title: 'Nova Postagem'
-                                    }}
-                                />
-                            </Stack>
-                        </View>
-                    </ImageBackground>
+                            />
+                        </Stack>
+                    </View>
                 </View>
-
             </ContextoSessao.Provider>
         </PaperProvider>
     );
