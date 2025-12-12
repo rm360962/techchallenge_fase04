@@ -1,23 +1,84 @@
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, Alert } from 'react-native';
 import { Conteiner } from '../components/conteiner';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { Input } from '../components/input';
 import { Button } from '../components/button';
+import { LoginService } from '../service/login.service';
+import { ContextoSessao } from '../contextoSessao';
+import { Snackbar } from 'react-native-paper';
+import { useRouter } from 'expo-router';
 
 const Login = () => {
-    const [usuario, setUsuario] = useState('');
-    const [senha, setSenha] = useState('');
+    const [usuario, setUsuario] = useState({ valor: '', erro: ''});
+    const [senha, setSenha] = useState({ valor: '', erro: ''});
+    const loginService = new LoginService();
+    const contextoSessao = useContext(ContextoSessao);
+    const router = useRouter();
 
-    const logarUsuario = () => {
-        console.log('Logando usuário...');
+    const logarUsuario = async () => {
+        const loginInvalido = validarLogin();
+
+        if(loginInvalido) {
+            return;
+        }
+
+        const { erro, tokenJwt, usuarioLogado } = await loginService.logarUsuario({
+            usuario: usuario.valor,
+            senha: senha.valor
+        });
+
+        if(erro) {
+            Alert.alert(erro);
+        }
+
+        contextoSessao.sessao = {
+            usuarioLogado: usuarioLogado,
+            token: tokenJwt,
+        };
+        
+        router.replace('postagem');
     }
+    
+    const validarLogin = () : boolean => {
+        let invalido = false;
+        if(usuario.valor == null || usuario.valor.trim().length === 0) {
+            setUsuario({ ...usuario, erro: 'O campo usuário é obrigatório'})
+            invalido = true;
+        }
+
+        if(senha.valor == null || senha.valor.trim().length === 0) {
+            setSenha({ ...senha, erro: 'O campo senha é obrigatório'})
+            invalido = true;
+        }
+
+        return invalido;
+    };
+
     return (
         <Conteiner>
             <View style={styles.container}>
                <View style={styles.conteinerLogin}>
                 <Text style={styles.tituloApp}>Blog Educa</Text>
-                <Input tipo="text" valor={usuario} onChange={() => setUsuario} titulo="Usuário" placeholder="Digite seu usuário" desabilitado={false} style={{width: '80%', marginBottom: 10}} />
-                <Input tipo="password" valor={senha} onChange={setSenha} titulo="Senha" placeholder="Digite sua senha" desabilitado={false} style={{width: '80%', marginBottom: 10}} />
+                <Input 
+                    valor={usuario.valor} 
+                    onChange={(valor) => setUsuario({ valor: valor, erro: ''})} 
+                    titulo="Usuário" 
+                    placeholder="Digite seu usuário" 
+                    desabilitado={false} 
+                    style={{width: '80%', marginBottom: 10}}
+                    erro={usuario.erro != null}
+                    mensagemErro={usuario.erro} 
+                />
+                <Input 
+                    valor={senha.valor} 
+                    onChange={(valor) => setSenha({ valor: valor, erro: ''})} 
+                    titulo="Senha" 
+                    placeholder="Digite sua senha" 
+                    desabilitado={false} 
+                    style={{width: '80%', marginBottom: 10}}
+                    erro={senha.erro != null}
+                    mensagemErro={senha.erro}
+                />
                 <Button tipo="primary" onClick={() =>  logarUsuario()} style={{width: '80%', marginTop: 10}}>Entrar</Button>
                </View>
             </View>
@@ -44,7 +105,7 @@ const styles = StyleSheet.create({
     tituloApp: {
         fontSize: 24, 
         marginBottom: 20,
-        fontWeight: 'semibold'   
+        fontWeight: 'bold'   
     }
 });
 

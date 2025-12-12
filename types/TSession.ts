@@ -2,7 +2,6 @@ import { ReactNode } from "react";
 
 export type TSessao = {
     usuarioLogado: TUsuarioLogado,
-    expiracao: number,
     token: string,
 };
 

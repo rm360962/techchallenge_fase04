@@ -5,13 +5,14 @@ export type TConteinerProps = {
 };
 
 export type TInputProps = {
-    tipo: string,
     titulo: string,
     valor: string,
     placeholder: string,
     obrigatorio?: boolean,
     onChange: (texto: string) => void
     desabilitado?: boolean
+    erro?: boolean,
+    mensagemErro?: string,
     style?: object
 };
 
