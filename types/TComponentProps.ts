@@ -17,11 +17,16 @@ export type TInputProps = {
 };
 
 export type TButtonProps = {
-    tipo: string,
     titulo?: string,
     carregando?: boolean,
     desabilitado?: boolean,
     children: ReactNode,
     onClick: () => void,
     style?: object,
+};
+
+export type TCustomModalProps = {
+    titulo: string,
+    visivel: boolean,
+    children: ReactNode,
 };

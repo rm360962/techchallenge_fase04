@@ -79,7 +79,7 @@ const Login = () => {
                     erro={senha.erro != null}
                     mensagemErro={senha.erro}
                 />
-                <Button tipo="primary" onClick={() =>  logarUsuario()} style={{width: '80%', marginTop: 10}}>Entrar</Button>
+                <Button onClick={() =>  logarUsuario()} style={{width: '80%', marginTop: 10}}>Entrar</Button>
                </View>
             </View>
         </Conteiner>

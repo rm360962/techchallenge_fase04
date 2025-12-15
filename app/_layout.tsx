@@ -21,10 +21,8 @@ const RootLayout = () => {
                         >
                             <Stack.Screen name="login" />
                             <Stack.Screen
-                                name="postagem"
                                 options={{
                                     headerShown: true,
-                                    title: 'Nova Postagem'
                                 }}
                             />
                         </Stack>

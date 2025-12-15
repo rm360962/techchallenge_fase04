@@ -2,18 +2,18 @@ import { View, Text, StyleSheet } from "react-native";
 import { TInputProps } from "../types/TComponentProps";
 import { TextInput } from 'react-native-paper';
 
-export const Input = (props: TInputProps) => {
+export const Input = ({ valor, onChange, titulo, placeholder, desabilitado, style, erro, mensagemErro }: TInputProps) => {
     return (
         <View style={styles.conteiner}>
             <TextInput
-                value={props.valor}
-                onChangeText={props.onChange}
-                label={props.titulo}
-                placeholder={props.placeholder}
-                disabled={props.desabilitado}
-                style={props.style}
+                value={valor}
+                onChangeText={onChange}
+                label={titulo}
+                placeholder={placeholder}
+                disabled={desabilitado}
+                style={{ width: 200, height: 55, ...style}}
             />
-            {props.erro ? <Text style={styles.mensagemErro}>{props.mensagemErro}</Text> : null}
+            {erro ? <Text style={styles.mensagemErro}>{mensagemErro}</Text> : null}
         </View>
     );
 };
@@ -24,7 +24,6 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
     },
-    input: {},
     mensagemErro: {
         fontSize: 14,
         color: 'red'
