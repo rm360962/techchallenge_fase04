@@ -7,7 +7,6 @@ import { CustomModal } from '../components/modal';
 import { Input } from '../components/input';
 import { TBuscaPostagem, TPostagem } from '../types/TPostagem';
 import { PostagemService } from '../service/postagem.service';
-import filterImage from '../assets/filter-square.svg';
 import { Avatar, IconButton } from 'react-native-paper';
 
 const Postagem = () => {
