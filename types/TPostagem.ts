@@ -20,3 +20,9 @@ export type TBuscaPostagem = {
     dataInclusaoInicio: string,
     dataInclusaoFim: string
 };
+
+export type TEdicaoPostagem = {
+    id?: number,
+    titulo: string,
+    descricao: string
+};

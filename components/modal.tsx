@@ -7,15 +7,13 @@ export const CustomModal = ({ titulo, visivel, children }: TCustomModalProps) =>
         <Portal>
             <Modal
                 visible={visivel}
-                style={{ padding: 20 }}
+                contentContainerStyle={styles.modalCard}
             >
-                <View style={styles.conteiner}>
-                    <View style={styles.tituloConteiner}>
-                        <Text style={styles.titulo}>{titulo}</Text>
-                    </View>
-                    <View style={styles.conteudo}>
-                        {children}
-                    </View>
+                <View style={styles.tituloConteiner}>
+                    <Text style={styles.titulo}>{titulo}</Text>
+                </View>
+                <View style={styles.conteudo}>
+                    {children}
                 </View>
             </Modal>
         </Portal>
@@ -23,20 +21,22 @@ export const CustomModal = ({ titulo, visivel, children }: TCustomModalProps) =>
 };
 
 const styles = StyleSheet.create({
-    conteiner: { 
+    modalCard: {
         backgroundColor: 'white',
+        margin: 20,      
+        padding: 20,     
+        borderRadius: 10,
     },
     tituloConteiner: {
         justifyContent: 'center',
         alignItems: 'center',
+        marginBottom: 10
     },
     titulo: {
         fontSize: 18,
-        fontWeight: 'semibold',
+        fontWeight: 'bold',
     },
     conteudo: {
-        justifyContent: 'center',
         alignItems: 'center',
-        paddingTop: 20
     }
 });

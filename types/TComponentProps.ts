@@ -13,7 +13,7 @@ export type TInputProps = {
     desabilitado?: boolean
     erro?: boolean,
     mensagemErro?: string,
-    style?: object
+    style?: any
 };
 
 export type TButtonProps = {

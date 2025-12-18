@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, useWindowDimensions, View } from 'react-native';
 import { Stack } from 'expo-router';
 import { PaperProvider } from 'react-native-paper';
 import { ContextoSessao } from '../contextoSessao';
@@ -7,12 +7,12 @@ import { TSessao } from '../types/TSession';
 
 const RootLayout = () => {
     const [sessao, setSessao] = useState({} as TSessao);
-
+    const { width, height } = useWindowDimensions();
     return (
         <PaperProvider>
             <ContextoSessao.Provider value={{ sessao: sessao, setSessao: setSessao }}>
                 <View style={styles.container}>
-                    <View style={{ flex: 1, width: '100%' }}>
+                    <View style={{ flex: 1, width: width, height: height }}>
                         <Stack
                             screenOptions={{
                                 headerShown: false,

@@ -4,14 +4,16 @@ import { TextInput } from 'react-native-paper';
 
 export const Input = ({ valor, onChange, titulo, placeholder, desabilitado, style, erro, mensagemErro }: TInputProps) => {
     return (
-        <View style={styles.conteiner}>
+        <View style={styles.wrapper}>
             <TextInput
+                mode="outlined"
+                dense
                 value={valor}
                 onChangeText={onChange}
                 label={titulo}
                 placeholder={placeholder}
                 disabled={desabilitado}
-                style={{ width: 200, height: 55, ...style}}
+                style={[{ width: '100%', backgroundColor: 'white' }, style]}
             />
             {erro ? <Text style={styles.mensagemErro}>{mensagemErro}</Text> : null}
         </View>
@@ -19,13 +21,14 @@ export const Input = ({ valor, onChange, titulo, placeholder, desabilitado, styl
 };
 
 const styles = StyleSheet.create({
-    conteiner: {
+    wrapper: {
         width: '100%',
-        justifyContent: 'center',
-        alignItems: 'center',
+        marginBottom: 10,
+        alignItems: 'center'
     },
     mensagemErro: {
-        fontSize: 14,
-        color: 'red'
+        fontSize: 12,
+        color: 'red',
+        marginTop: 4,
     }
 });
