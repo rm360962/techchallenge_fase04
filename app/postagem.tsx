@@ -1,13 +1,14 @@
 
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { Conteiner } from '../components/conteiner';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button } from '../components/button';
 import { CustomModal } from '../components/modal';
 import { Input } from '../components/input';
 import { TBuscaPostagem, TPostagem } from '../types/TPostagem';
 import { PostagemService } from '../service/postagem.service';
 import { Avatar, IconButton } from 'react-native-paper';
+import { PostagemCard } from '../components/postagemCard';
 
 const Postagem = () => {
     const buscaPostagemInicial: TBuscaPostagem = {
@@ -20,16 +21,31 @@ const Postagem = () => {
     };
     const [filtroVisivel, setFiltroVisivel] = useState(false);
     const [filtrosPostagem, setFiltrosPostagem] = useState(buscaPostagemInicial);
+    const [filtrosBuscaAtiva, setFiltrosBuscaAtiva] = useState(buscaPostagemInicial);
     const [titulo, setTitulo] = useState('');
     const [postagens, setPostagens] = useState([] as TPostagem[]);
     const postagemService = new PostagemService();
 
-    const pesquisar = async () => {
-        console.log('pesquisando')
-        const { erro, postagens: listaPostagens } =
-            await postagemService.buscarPostagens(filtrosPostagem);
+    useEffect(() => {
+        const delayBusca = setTimeout(() => {
+            setFiltrosBuscaAtiva(prev => ({ ...prev, titulo}));
+        }, 1000);
 
-        console.log(listaPostagens);
+        return () => clearTimeout(delayBusca);
+    }, [titulo]);
+
+    useEffect(() => {
+        pesquisar(filtrosBuscaAtiva)
+    }, [filtrosBuscaAtiva]);
+
+    useEffect(() => {
+        pesquisar(filtrosPostagem);
+    }, []);
+
+    const pesquisar = async (payload: TBuscaPostagem) => {
+        const { erro, postagens: listaPostagens } =
+            await postagemService.buscarPostagens(payload);
+
         if (erro) {
             return;
         }
@@ -37,8 +53,12 @@ const Postagem = () => {
         if (listaPostagens.length === 0) {
             return;
         }
-        console.log('setando postagens');
-        setPostagens(postagens);
+
+        setPostagens(listaPostagens);
+    };
+
+    const visualizarPostagem = (id: number) => {
+        console.log(`Visualizando postagem ${id}`);
     };
 
     const tituloChange = (titulo: string) => {
@@ -49,21 +69,21 @@ const Postagem = () => {
         <Conteiner>
             <View style={styles.header}>
                 <View style={styles.conteinerTitulo}>
-                    <Text style={styles.titulo}>Postagens</Text>
+                    <Text style={styles.titulo}>Blog Educa</Text>
                 </View>
 
                 <View style={styles.conteinerFiltros}>
                     <View style={{ flex: 1, marginRight: 10, flexDirection: 'row', width: '100%', alignItems: 'center', justifyContent: 'space-between' }}>
-                        <View style={{ width: '90%'}}>
+                        <View style={{ width: '90%' }}>
                             <Input
                                 valor={titulo}
                                 placeholder='Digite o título a ser buscado'
                                 titulo='Título'
                                 onChange={(valor) => tituloChange(valor)}
-                                style={{ height: 25, width: '100%' }}
+                                style={{ height: 42, width: '100%' }}
                             />
                         </View>
-                        <View style={{ width: '10%'}}>
+                        <View style={{ width: '10%' }}>
                             <IconButton
                                 icon="filter-variant"
                                 iconColor="white"
@@ -75,25 +95,40 @@ const Postagem = () => {
                     </View>
                 </View>
             </View>
+            <View style={styles.conteinerSubtitulo}>
+                <Avatar.Icon
+                    size={40}
+                    icon="magnify"
+                    style={{ backgroundColor: 'white'}}
+                    color="#03318C"
+                    />
+                <Text style={styles.subtitulo}>Postagens encontradas</Text>
+            </View>
             <ScrollView style={styles.listaScroll} contentContainerStyle={styles.listaConteudo}>
                 {postagens.map((item: TPostagem) => (
-                    <Postagem key={item.id} {...item} />
+                    <PostagemCard key={item.id} postagem={item} tratarClique={visualizarPostagem} />
                 ))}
             </ScrollView>
             <CustomModal titulo='Filtrar postagens' visivel={filtroVisivel}>
                 <View>
                     <View>
                         <Input
-                        valor={filtrosPostagem.id}
-                        titulo='Código'
-                        placeholder='Digite o código da postagem'
-                        onChange={(valor) => { setFiltrosPostagem({ ...filtrosPostagem, id: valor }) }}
-                        style={{ marginBottom: 5 }} />
+                            valor={filtrosPostagem.id}
+                            titulo='Código'
+                            placeholder='Digite o código da postagem'
+                            onChange={(valor) => { setFiltrosPostagem({ ...filtrosPostagem, id: valor }) }}
+                            style={{ marginBottom: 5 }} />
+                        <Input
+                            valor={filtrosPostagem.descricao}
+                            titulo='Descrição'
+                            placeholder='Digite a descrição da postagem'
+                            onChange={(valor) => { setFiltrosPostagem({ ...filtrosPostagem, descricao: valor }) }}
+                            style={{ marginBottom: 5 }} />
                     </View>
                 </View>
                 <View>
-                    <Button onClick={() => pesquisar()}>Aplicar filtros</Button>
-                    <Button onClick={() => setFiltroVisivel(false)}>Voltar</Button>
+                    <Button onClick={() => pesquisar(filtrosPostagem)} style={{ marginBottom: 5}}>Aplicar filtros</Button>
+                    <Button onClick={() => setFiltroVisivel(false)} corSecundaria={true}>Voltar</Button>
                 </View>
             </CustomModal>
         </Conteiner>
@@ -102,11 +137,12 @@ const Postagem = () => {
 
 const styles = StyleSheet.create({
     header: {
-        paddingBottom: 10,
+        marginTop: 15
     },
     conteinerTitulo: {
         alignItems: 'center',
-        paddingVertical: 10
+        paddingVertical: 10,
+        letterSpacing: 0.5
     },
     conteinerFiltros: {
         flexDirection: 'row',
@@ -118,12 +154,20 @@ const styles = StyleSheet.create({
         fontSize: 20,
         fontWeight: 'bold',
     },
+    conteinerSubtitulo: { 
+        flexDirection: 'row', 
+        alignItems: 'center'
+    },
+    subtitulo: {
+        fontSize: 16,
+        fontWeight: '600',
+    },
     listaScroll: {
         flex: 1,
         width: '100%',
     },
     listaConteudo: {
-        padding: 15,
+        padding: 10,
         paddingBottom: 30
     }
 });

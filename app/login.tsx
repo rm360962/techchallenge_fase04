@@ -9,8 +9,8 @@ import { Snackbar } from 'react-native-paper';
 import { useRouter } from 'expo-router';
 
 const Login = () => {
-    const [usuario, setUsuario] = useState({ valor: '', erro: ''});
-    const [senha, setSenha] = useState({ valor: '', erro: ''});
+    const [usuario, setUsuario] = useState({ valor: 'Sistema', erro: ''});
+    const [senha, setSenha] = useState({ valor: '12345678', erro: ''});
     const loginService = new LoginService();
     const contextoSessao = useContext(ContextoSessao);
     const router = useRouter();

@@ -6,7 +6,7 @@ export const Button = (props: TButtonProps) => {
         <PaperButton 
             disabled={props.desabilitado} 
             onPress={props.onClick} 
-            style={{ ...props.style, backgroundColor: '#03318C', borderRadius: '10', width: 200}}
+            style={{ ...props.style, backgroundColor: props.corSecundaria ? 'gray' : '#03318C', borderRadius: '10', width: 200}}
             labelStyle={{ color: 'white', fontSize: 15, fontWeight: 'semibold'}}>
             {props.carregando ? "Carregando..." : props.children}
         </PaperButton>

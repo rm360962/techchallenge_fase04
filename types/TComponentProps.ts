@@ -1,4 +1,5 @@
 import { ReactNode } from "react";
+import { TPostagem } from "./TPostagem";
 
 export type TConteinerProps = {
     children: ReactNode
@@ -20,6 +21,7 @@ export type TButtonProps = {
     titulo?: string,
     carregando?: boolean,
     desabilitado?: boolean,
+    corSecundaria?: boolean,
     children: ReactNode,
     onClick: () => void,
     style?: object,
@@ -29,4 +31,9 @@ export type TCustomModalProps = {
     titulo: string,
     visivel: boolean,
     children: ReactNode,
+};
+
+export type TPostagemCardProps = {
+    tratarClique: Function,
+    postagem: TPostagem,
 };
