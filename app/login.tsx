@@ -5,17 +5,19 @@ import { Input } from '../components/input';
 import { Button } from '../components/button';
 import { LoginService } from '../service/login.service';
 import { ContextoSessao } from '../contextoSessao';
-import { Snackbar } from 'react-native-paper';
 import { useRouter } from 'expo-router';
 
 const Login = () => {
     const [usuario, setUsuario] = useState({ valor: 'Sistema', erro: ''});
     const [senha, setSenha] = useState({ valor: '12345678', erro: ''});
+    const [logando, setLogando] = useState(false);
     const loginService = new LoginService();
     const contextoSessao = useContext(ContextoSessao);
     const router = useRouter();
 
     const logarUsuario = async () => {
+        setLogando(true);
+        
         const loginInvalido = validarLogin();
 
         if(loginInvalido) {
@@ -27,6 +29,8 @@ const Login = () => {
             senha: senha.valor
         });
 
+        setLogando(false);
+        
         if(erro) {
             Alert.alert(erro);
         }
@@ -79,7 +83,7 @@ const Login = () => {
                     erro={senha.erro != null}
                     mensagemErro={senha.erro}
                 />
-                <Button onClick={() =>  logarUsuario()} style={{width: '80%', marginTop: 10}}>Entrar</Button>
+                <Button onClick={() =>  logarUsuario()} style={{width: '80%', marginTop: 10}} carregando={logando}>Entrar</Button>
                </View>
             </View>
         </Conteiner>

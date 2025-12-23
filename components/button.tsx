@@ -1,14 +1,15 @@
 import { TButtonProps } from "../types/TComponentProps";
-import { Button as PaperButton } from 'react-native-paper';
+import {  Button as PaperButton } from 'react-native-paper';
 
-export const Button = (props: TButtonProps) => {
+export const Button = ({ desabilitado, onClick, style, corSecundaria, carregando, children}: TButtonProps) => {
     return (
         <PaperButton 
-            disabled={props.desabilitado} 
-            onPress={props.onClick} 
-            style={{ ...props.style, backgroundColor: props.corSecundaria ? 'gray' : '#03318C', borderRadius: '10', width: 200}}
-            labelStyle={{ color: 'white', fontSize: 15, fontWeight: 'semibold'}}>
-            {props.carregando ? "Carregando..." : props.children}
+            disabled={desabilitado || carregando} 
+            onPress={onClick} 
+            style={{ ...style, backgroundColor: corSecundaria ? 'gray' : '#03318C', width: 200, justifyContent: 'center'}}
+            labelStyle={{ color: 'white', fontSize: 15, fontWeight: 'semibold'}}
+            loading={carregando}>
+            {!carregando && children}
         </PaperButton>
     );
 };

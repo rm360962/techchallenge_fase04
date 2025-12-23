@@ -9,6 +9,7 @@ import { TBuscaPostagem, TPostagem } from '../types/TPostagem';
 import { PostagemService } from '../service/postagem.service';
 import { Avatar, IconButton } from 'react-native-paper';
 import { PostagemCard } from '../components/postagemCard';
+import { useRouter } from 'expo-router';
 
 const Postagem = () => {
     const buscaPostagemInicial: TBuscaPostagem = {
@@ -20,12 +21,14 @@ const Postagem = () => {
         dataInclusaoFim: ''
     };
     const [filtroVisivel, setFiltroVisivel] = useState(false);
-    const [filtrosPostagem, setFiltrosPostagem] = useState(buscaPostagemInicial);
+    const [pesquisando, setPesquisando] = useState(false);
+    const [filtrosBusca, setfiltrosBusca] = useState(buscaPostagemInicial);
     const [filtrosBuscaAtiva, setFiltrosBuscaAtiva] = useState(buscaPostagemInicial);
     const [titulo, setTitulo] = useState('');
     const [postagens, setPostagens] = useState([] as TPostagem[]);
     const postagemService = new PostagemService();
-
+    const router = useRouter();
+    
     useEffect(() => {
         const delayBusca = setTimeout(() => {
             setFiltrosBuscaAtiva(prev => ({ ...prev, titulo}));
@@ -39,12 +42,17 @@ const Postagem = () => {
     }, [filtrosBuscaAtiva]);
 
     useEffect(() => {
-        pesquisar(filtrosPostagem);
+        pesquisar(filtrosBusca);
     }, []);
 
     const pesquisar = async (payload: TBuscaPostagem) => {
+        setPesquisando(true);
+        
         const { erro, postagens: listaPostagens } =
             await postagemService.buscarPostagens(payload);
+        
+        setPesquisando(false);
+        setFiltroVisivel(false);
 
         if (erro) {
             return;
@@ -58,7 +66,12 @@ const Postagem = () => {
     };
 
     const visualizarPostagem = (id: number) => {
-        console.log(`Visualizando postagem ${id}`);
+        router.push(`visualizar-postagem/${id}`);
+    };
+
+    const visualizarFiltros = () => {
+        setfiltrosBusca(buscaPostagemInicial);
+        setFiltroVisivel(true);
     };
 
     const tituloChange = (titulo: string) => {
@@ -89,7 +102,7 @@ const Postagem = () => {
                                 iconColor="white"
                                 style={{ backgroundColor: '#03318C', borderRadius: 5 }}
                                 size={30}
-                                onPress={() => setFiltroVisivel(true)}
+                                onPress={() => visualizarFiltros()}
                             />
                         </View>
                     </View>
@@ -113,22 +126,22 @@ const Postagem = () => {
                 <View>
                     <View>
                         <Input
-                            valor={filtrosPostagem.id}
+                            valor={filtrosBusca.id}
                             titulo='Código'
                             placeholder='Digite o código da postagem'
-                            onChange={(valor) => { setFiltrosPostagem({ ...filtrosPostagem, id: valor }) }}
+                            onChange={(valor) => { setfiltrosBusca({ ...filtrosBusca, id: valor }) }}
                             style={{ marginBottom: 5 }} />
                         <Input
-                            valor={filtrosPostagem.descricao}
+                            valor={filtrosBusca.descricao}
                             titulo='Descrição'
                             placeholder='Digite a descrição da postagem'
-                            onChange={(valor) => { setFiltrosPostagem({ ...filtrosPostagem, descricao: valor }) }}
+                            onChange={(valor) => { setfiltrosBusca({ ...filtrosBusca, descricao: valor }) }}
                             style={{ marginBottom: 5 }} />
                     </View>
                 </View>
                 <View>
-                    <Button onClick={() => pesquisar(filtrosPostagem)} style={{ marginBottom: 5}}>Aplicar filtros</Button>
-                    <Button onClick={() => setFiltroVisivel(false)} corSecundaria={true}>Voltar</Button>
+                    <Button onClick={() => pesquisar(filtrosBusca)} style={{ marginBottom: 5}} carregando={pesquisando}>Aplicar filtros</Button>
+                    <Button onClick={() => setFiltroVisivel(false)} corSecundaria={true} desabilitado={pesquisando}>Voltar</Button>
                 </View>
             </CustomModal>
         </Conteiner>
