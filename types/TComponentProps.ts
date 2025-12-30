@@ -14,7 +14,9 @@ export type TInputProps = {
     desabilitado?: boolean
     erro?: boolean,
     mensagemErro?: string,
-    style?: any
+    style?: any,
+    multiplasLinhas?: boolean,
+    numeroLinhas?: number,
 };
 
 export type TButtonProps = {
@@ -35,5 +37,23 @@ export type TCustomModalProps = {
 
 export type TPostagemCardProps = {
     tratarClique: Function,
+    visualizar: Function,
+    editar: Function,
+    remover: Function,
     postagem: TPostagem,
+    mostrarAcoes: boolean
+};
+
+export type THeaderProps = {
+    titulo: string,
+    voltar?: Function
+};
+
+export type TModalConfirmacao = {
+    titulo: string, 
+    pergunta: string, 
+    visivel: boolean, 
+    setVisivel: Function, 
+    acao: Function,
+    carregando: boolean,
 };

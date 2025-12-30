@@ -20,8 +20,10 @@ const RootLayout = () => {
                             initialRouteName="login"
                         >
                             <Stack.Screen name="login" />
-                            <Stack.Screen options={{ headerShown: true,}} />
-                            <Stack.Screen name="visualizar-postagem/[id]"/>
+                            <Stack.Screen name="/postagem/index" />
+                            <Stack.Screen name="/postagem/visualizar/[id]" />
+                            <Stack.Screen name="/postagem/editar/[id]" />
+                            <Stack.Screen name="/postagem/cadastrar"/>
                         </Stack>
                     </View>
                 </View>
