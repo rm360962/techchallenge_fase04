@@ -4,6 +4,7 @@ import { Stack } from 'expo-router';
 import { PaperProvider } from 'react-native-paper';
 import { ContextoSessao } from '../contextoSessao';
 import { TSessao } from '../types/TSession';
+import FooterNav from '../components/footerNav';
 
 const RootLayout = () => {
     const [sessao, setSessao] = useState({} as TSessao);
@@ -24,8 +25,12 @@ const RootLayout = () => {
                             <Stack.Screen name="/postagem/visualizar/[id]" />
                             <Stack.Screen name="/postagem/editar/[id]" />
                             <Stack.Screen name="/postagem/cadastrar"/>
+                            <Stack.Screen name="/usuario/index" />
+                            <Stack.Screen name="/usuario/cadastrar" />
+                            <Stack.Screen name="/usuario/editar[id]" />
                         </Stack>
                     </View>
+                    <FooterNav />
                 </View>
             </ContextoSessao.Provider>
         </PaperProvider>

@@ -1,5 +1,6 @@
 import { ReactNode } from "react";
 import { TPostagem } from "./TPostagem";
+import { Option } from "react-native-paper-dropdown";
 
 export type TConteinerProps = {
     children: ReactNode
@@ -17,6 +18,7 @@ export type TInputProps = {
     style?: any,
     multiplasLinhas?: boolean,
     numeroLinhas?: number,
+    senha?: boolean,
 };
 
 export type TButtonProps = {
@@ -56,4 +58,11 @@ export type TModalConfirmacao = {
     setVisivel: Function, 
     acao: Function,
     carregando: boolean,
+};
+
+export type TSelectProps = {
+    label: string,
+    valor: string,
+    valores: Option[],
+    onChange: Function,
 };

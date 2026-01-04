@@ -82,6 +82,7 @@ const Login = () => {
                     style={{width: '80%', marginBottom: 10}}
                     erro={senha.erro != null && senha.erro.length > 0}
                     mensagemErro={senha.erro}
+                    senha={true}
                 />
                 <Button onClick={() =>  logarUsuario()} style={{width: '80%', marginTop: 10}} carregando={logando}>Entrar</Button>
                </View>

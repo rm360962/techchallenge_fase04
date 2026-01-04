@@ -193,7 +193,7 @@ const Postagem = () => {
             </CustomModal>
             <ModalConfirmacao
                 titulo='Remover postagem'
-                pergunta='Confirma a remoção da postagem'
+                pergunta='Confirma a remoção da postagem?'
                 acao={() => removerPostagem()}
                 visivel={modalRemocao}
                 setVisivel={setModalRemocao}
@@ -245,4 +245,5 @@ const styles = StyleSheet.create({
         backgroundColor: '#03318C',
     },
 });
+
 export default Postagem;
