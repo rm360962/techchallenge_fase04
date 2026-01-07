@@ -192,6 +192,7 @@ const Postagem = () => {
                             />
                         </View>
                         <View style={{ width: '10%' }}>
+                            <View style={{ height: 7 }}></View>
                             <IconButton
                                 icon="filter-variant"
                                 iconColor="white"

@@ -37,6 +37,7 @@ const CadastrarPostagem = () => {
             let mensagemPadrao = `O seguintes erros foram encontrados ao cadastrar a postagem: `;
             const mensagemErros = erros.map(item => item.mensagem).join(', ');
             mostrarMensagem(`${mensagemPadrao}${mensagemErros}`);
+            setCadastrando(false);
             return;
         }
 

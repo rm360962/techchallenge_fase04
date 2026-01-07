@@ -17,14 +17,26 @@ const EditarUsuario = () => {
     const [login, setLogin] = useState({ valor: '', erro: '' });
     const [categoriaId, setCategoriaId] = useState({ valor: '', erro: '' });
     const [senha, setSenha] = useState({ valor: '', erro: '' });
-    const [cadastrando, setCadastrando] = useState(false);
+    const [editando, setEditando] = useState(false);
     const [visivel, setVisivel] = useState(false);
-    const [mensagemErro, setMensagemErro] = useState('');
+    const [alterarSenha, setAlterarSenha] = useState('0');
+    const [mensagem, setMensagem] = useState('');
     const [categorias, setCategorias] = useState([] as Option[]);
     const usuarioService = new UsuarioService();
     const regex = /^[^\s@]+@[^\s@]+\.com$/;
+    const opcoesAlteracaoSenha = [
+        {
+            label: 'Sim',
+            value: '1'
+        },
+        {
+            label: 'Não',
+            value: '0'
+        }
+    ];
+
     const { id: idUsuario } = useLocalSearchParams();
-    
+
     useEffect(() => {
         buscarUsuario();
         buscarCategoriasUsuario();
@@ -32,9 +44,9 @@ const EditarUsuario = () => {
 
     const buscarUsuario = async () => {
         const { erro, usuario } = await usuarioService.buscarUsuarioPorId(+idUsuario);
-        
-        if(erro) {
-            mostrarErro(erro);
+
+        if (erro) {
+            mostrarMensagem(erro);
             return;
         }
 
@@ -45,16 +57,17 @@ const EditarUsuario = () => {
         setCategoriaId({ valor: usuario?.categoria?.id.toString(), erro: '' });
     };
 
-    const cadastrarUsuario = async () => {
+    const editarUsuario = async () => {
         const cadastroInvalido = validarCadastro();
 
         if (cadastroInvalido) {
             return;
         }
 
-        setCadastrando(true);
+        setEditando(true);
 
-        const { erros } = await usuarioService.cadastrarUsuario({
+        const erros = await usuarioService.editarUsuario({
+            id: id,
             nome: nome.valor,
             email: email.valor,
             login: login.valor,
@@ -62,27 +75,27 @@ const EditarUsuario = () => {
             senha: senha.valor
         });
 
-        setCadastrando(false);
-        
-        if(erros) {
+        setEditando(false);
+
+        if (erros) {
             let mensagemPadrao = `O seguintes erros foram encontrados ao cadastrar a postagem: `;
             const mensagemErros = erros.map(item => item.mensagem).join(', ');
-            mostrarErro(`${mensagemPadrao}${mensagemErros}`);
+            mostrarMensagem(`${mensagemPadrao}${mensagemErros}`);
             return;
         }
 
-        console.log('Usuário cadastrado com sucesso');
+        mostrarMensagem('Usuário editado com sucesso');
     };
 
     const buscarCategoriasUsuario = async () => {
         const { erro, categorias } = await usuarioService.buscarCategoriasUsuario();
 
-        if(erro) {
-            mostrarErro(erro);
+        if (erro) {
+            mostrarMensagem(erro);
             return;
         }
-        
-        const opcoes : Option[] = categorias.map((item) => {
+
+        const opcoes: Option[] = categorias.map((item) => {
             return {
                 label: item.nome,
                 value: item.id.toString(),
@@ -92,8 +105,8 @@ const EditarUsuario = () => {
         setCategorias(opcoes);
     };
 
-    const mostrarErro = (mensagem: string) => {
-        setMensagemErro(mensagem);
+    const mostrarMensagem = (mensagem: string) => {
+        setMensagem(mensagem);
         setVisivel(true);
     };
 
@@ -120,23 +133,18 @@ const EditarUsuario = () => {
             setLogin({ ...login, erro: 'O campo login é obrigatório' });
         }
 
-        if (!senha.valor || senha.valor.length === 0) {
-            invalido = true;
-            setSenha({ ...senha, erro: 'O campo senha é obrigatório' });
-        }
-
         return invalido;
     };
 
     return (
         <Conteiner>
-            <Header titulo="Edição de usuário" voltar={() => { router.push('usuario') }}/>
+            <Header titulo="Edição de usuário" voltar={() => { router.push('usuario') }} />
             <View style={{ width: '100%', height: '77%', padding: 20 }}>
                 <Input
                     valor={id.toString()}
                     titulo="Nome"
                     placeholder="Digite o nome do usuário"
-                    onChange={() => {}}
+                    onChange={() => { }}
                     desabilitado={true}
                     style={{ width: '100%' }}
                 />
@@ -167,16 +175,22 @@ const EditarUsuario = () => {
                     mensagemErro={login.erro}
                     style={{ width: '100%' }}
                 />
-                <Input
-                    valor={senha.valor}
-                    titulo="Senha"
-                    placeholder="Digite o senha do usuário"
-                    onChange={(valor) => { setSenha({ valor: valor, erro: '' }) }}
-                    erro={senha.erro != null && senha.erro.length > 0}
-                    mensagemErro={senha.erro}
-                    style={{ width: '100%' }}
-                    senha={true}
-                />
+                <Select label="Alterar senha"
+                    valor={alterarSenha}
+                    valores={opcoesAlteracaoSenha}
+                    onChange={(valor: string) => { setAlterarSenha(valor); }} />
+                {alterarSenha === '1' && (
+                    <Input
+                        valor={senha.valor}
+                        titulo="Senha"
+                        placeholder="Digite o senha do usuário"
+                        onChange={(valor) => { setSenha({ valor: valor, erro: '' }) }}
+                        erro={senha.erro != null && senha.erro.length > 0}
+                        mensagemErro={senha.erro}
+                        style={{ width: '100%' }}
+                        senha={true}
+                    />
+                )}
                 <Select label="Selecione a categoria do usuário"
                     valor={categoriaId.valor}
                     valores={categorias}
@@ -184,7 +198,7 @@ const EditarUsuario = () => {
                 />
             </View>
             <View style={{ height: '10%' }}>
-                <Button onClick={() => cadastrarUsuario()} carregando={cadastrando}>Gravar</Button>
+                <Button onClick={() => editarUsuario()} carregando={editando}>Gravar</Button>
             </View>
             <Snackbar
                 visible={visivel}
@@ -193,7 +207,7 @@ const EditarUsuario = () => {
                 wrapperStyle={{ bottom: 50 }}
                 style={{ backgroundColor: '#333' }}
             >
-                {mensagemErro}
+                {mensagem}
             </Snackbar>
         </Conteiner>
     )

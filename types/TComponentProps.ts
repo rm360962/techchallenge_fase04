@@ -63,7 +63,7 @@ export type TModalConfirmacao = {
 
 export type TSelectProps = {
     label: string,
-    valor: string,
+    valor: string | undefined,
     valores: Option[],
     onChange: Function,
 };

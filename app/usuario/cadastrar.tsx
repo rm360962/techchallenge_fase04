@@ -18,7 +18,7 @@ const CadastrarUsuario = () => {
     const [senha, setSenha] = useState({ valor: '', erro: '' });
     const [cadastrando, setCadastrando] = useState(false);
     const [visivel, setVisivel] = useState(false);
-    const [mensagemErro, setMensagemErro] = useState('');
+    const [mensagem, setMensagem] = useState('');
     const [categorias, setCategorias] = useState([] as Option[]);
     const usuarioService = new UsuarioService();
     const regex = /^[^\s@]+@[^\s@]+\.com$/;
@@ -46,28 +46,35 @@ const CadastrarUsuario = () => {
 
         setCadastrando(false);
 
-        if(erros) {
+        if (erros) {
             let mensagemPadrao = `O seguintes erros foram encontrados ao cadastrar a postagem: `;
             const mensagemErros = erros.map(item => item.mensagem).join(', ');
-            mostrarErro(`${mensagemPadrao}${mensagemErros}`);
+            mostrarMensagem(`${mensagemPadrao}${mensagemErros}`);
+            setCadastrando(false);
             return;
         }
 
-        router.push({
-            pathname: "usuario/editar/[id]",
-            params: { id: usuario.id }
-        });
+        setMensagem('Usuário cadastrado com sucesso');
+
+        setTimeout(() => {
+            setCadastrando(false);
+
+            router.push({
+                pathname: "usuario/editar/[id]",
+                params: { id: usuario.id }
+            });
+        }, 2000);
     };
 
     const buscarCategoriasUsuario = async () => {
         const { erro, categorias } = await usuarioService.buscarCategoriasUsuario();
 
-        if(erro) {
-            mostrarErro(erro);
+        if (erro) {
+            mostrarMensagem(erro);
             return;
         }
-        
-        const opcoes : Option[] = categorias.map((item) => {
+
+        const opcoes: Option[] = categorias.map((item) => {
             return {
                 label: item.nome,
                 value: item.id.toString(),
@@ -77,8 +84,8 @@ const CadastrarUsuario = () => {
         setCategorias(opcoes);
     };
 
-    const mostrarErro = (mensagem: string) => {
-        setMensagemErro(mensagem);
+    const mostrarMensagem = (mensagem: string) => {
+        setMensagem(mensagem);
         setVisivel(true);
     };
 
@@ -170,7 +177,7 @@ const CadastrarUsuario = () => {
                 wrapperStyle={{ bottom: 50 }}
                 style={{ backgroundColor: '#333' }}
             >
-                {mensagemErro}
+                {mensagem}
             </Snackbar>
         </Conteiner>
     )

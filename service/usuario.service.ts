@@ -123,6 +123,10 @@ export class UsuarioService {
     };
 
     editarUsuario = async (usuario: TEdicaoUsuario): Promise<TRespostaErroApi[] | null> => {
+        if(!usuario.senha || usuario.senha?.length === 0) {
+            delete usuario['senha'];
+        }
+        
         try {
             const resposta = await clienteAxios({
                 method: 'put',
@@ -133,14 +137,14 @@ export class UsuarioService {
                 },
             });
 
-            return resposta.status === 200 ? null : resposta.data;
+            return resposta.status === 200 ? null : resposta.data.erros;
         } catch (erro) {
             console.log('Erro ao editar o usuario', erro);
             return [
                 {
                     mensagem: 'Erro ao editar o usuário'
                 }
-            ]
+            ];
         }
     };
 
