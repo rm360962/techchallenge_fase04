@@ -35,6 +35,7 @@ export type TCustomModalProps = {
     titulo: string,
     visivel: boolean,
     children: ReactNode,
+    altura?: number
 };
 
 export type TPostagemCardProps = {
@@ -65,4 +66,10 @@ export type TSelectProps = {
     valor: string,
     valores: Option[],
     onChange: Function,
+};
+
+export type TDateInputProps = { 
+    data: Date | undefined, 
+    label: string, 
+    onChange: Function
 };

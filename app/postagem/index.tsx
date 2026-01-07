@@ -1,16 +1,21 @@
 
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { Conteiner } from '../../components/conteiner';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button } from '../../components/button';
 import { CustomModal } from '../../components/modal';
 import { Input } from '../../components/input';
 import { TBuscaPostagem, TPostagem } from '../../types/TPostagem';
 import { PostagemService } from '../../service/postagem.service';
-import { Avatar, IconButton, FAB } from 'react-native-paper';
+import { Avatar, IconButton, FAB, Snackbar } from 'react-native-paper';
 import { PostagemCard } from '../../components/postagemCard';
 import { useRouter } from 'expo-router';
 import ModalConfirmacao from '../../components/modalConfirmacao';
+import { TUsuario } from '../../types/TUsuario';
+import { UsuarioService } from '../../service/usuario.service';
+import { Option } from 'react-native-paper-dropdown';
+import Select from '../../components/select';
+import DateInput from '../../components/dateInput';
 
 const Postagem = () => {
     const buscaPostagemInicial: TBuscaPostagem = {
@@ -27,11 +32,24 @@ const Postagem = () => {
     const [filtrosBuscaAtiva, setFiltrosBuscaAtiva] = useState(buscaPostagemInicial);
     const [titulo, setTitulo] = useState('');
     const [postagens, setPostagens] = useState([] as TPostagem[]);
+    const [professores, setProfessores] = useState([] as Option[]);
     const [modalRemocao, setModalRemocao] = useState(false);
     const [removendo, setRemovendo] = useState(false);
     const [idRemocao, setIdRemocao] = useState<number | null>(null);
+    const [mensagemVisivel, setMensagemVisivel] = useState(false);
+    const [mensagem, setMensagem] = useState('');
+    const [dataInicial, setDataInicial] = useState<Date | undefined>(undefined);
+    const [dataFinal, setDataFinal] = useState<Date | undefined>(undefined);
+
     const postagemService = new PostagemService();
+    const usuarioService = new UsuarioService();
+
     const router = useRouter();
+
+    useEffect(() => {
+        buscarProfessores();
+        pesquisar(filtrosBusca);
+    }, []);
 
     useEffect(() => {
         const delayBusca = setTimeout(() => {
@@ -42,15 +60,20 @@ const Postagem = () => {
     }, [titulo]);
 
     useEffect(() => {
-        pesquisar(filtrosBuscaAtiva)
+        pesquisar(filtrosBuscaAtiva);
     }, [filtrosBuscaAtiva]);
-
-    useEffect(() => {
-        pesquisar(filtrosBusca);
-    }, []);
 
     const pesquisar = async (payload: TBuscaPostagem) => {
         setPesquisando(true);
+
+        if(dataInicial != null) {
+            payload.dataInclusaoInicio = formatarData(dataInicial);
+        }
+
+        if(dataFinal != null) {
+            payload.dataInclusaoFim = formatarData(dataFinal);
+        }
+
 
         const { erro, postagens: listaPostagens } =
             await postagemService.buscarPostagens(payload);
@@ -59,14 +82,15 @@ const Postagem = () => {
         setFiltroVisivel(false);
 
         if (erro) {
-            return;
-        }
-
-        if (listaPostagens.length === 0) {
+            mostrarMensagem(erro);
             return;
         }
 
         setPostagens(listaPostagens);
+
+        if (listaPostagens.length === 0) {
+            mostrarMensagem('Nenhuma postagem encontrada com os filtros informados');
+        }
     };
 
     const visualizarPostagem = (id: number) => {
@@ -94,20 +118,59 @@ const Postagem = () => {
         setRemovendo(true);
 
         const postagemExcluida = await postagemService.removerPostagem(idRemocao);
-    
+
+        if (!postagemExcluida) {
+            mostrarMensagem('Erro ao excluir a postagem, contate o adminstrador do sistema');
+            return;
+        }
+
         pesquisar(filtrosBusca);
 
         setRemovendo(false);
         setModalRemocao(false);
+
+        mostrarMensagem('Postagem excluída com sucesso');
     };
 
     const visualizarFiltros = () => {
         setfiltrosBusca(buscaPostagemInicial);
+        setDataInicial(undefined);
+        setDataFinal(undefined);
         setFiltroVisivel(true);
     };
 
     const tituloChange = (titulo: string) => {
         setTitulo(titulo);
+    };
+
+    const mostrarMensagem = (mensagem: string) => {
+        setMensagemVisivel(true);
+        setMensagem(mensagem);
+    };
+
+    const formatarData = (data: Date) => {
+        const ano = data.getFullYear();
+        const mes = String(data.getMonth() + 1).padStart(2, '0');
+        const dia = String(data.getDate()).padStart(2, '0');
+    
+        return `${ano}-${mes}-${dia}`;
+    };
+    const buscarProfessores = async () => {
+        const { erro, usuarios } = await usuarioService.buscarProfessores();
+
+        if (erro) {
+            mostrarMensagem(erro);
+            return;
+        }
+
+        const opcoes = usuarios.map((usuario) => {
+            return {
+                label: usuario.nome,
+                value: usuario.id.toString(),
+            };
+        });
+
+        setProfessores(opcoes);
     };
 
     return (
@@ -176,28 +239,60 @@ const Postagem = () => {
                             valor={filtrosBusca.id}
                             titulo='Código'
                             placeholder='Digite o código da postagem'
-                            onChange={(valor) => { setfiltrosBusca({ ...filtrosBusca, id: valor }) }}
-                            style={{ marginBottom: 5 }} />
+                            onChange={(valor) => { setfiltrosBusca({ ...filtrosBusca, id: valor }) }} />
                         <Input
                             valor={filtrosBusca.descricao}
                             titulo='Descrição'
                             placeholder='Digite a descrição da postagem'
-                            onChange={(valor) => { setfiltrosBusca({ ...filtrosBusca, descricao: valor }) }}
-                            style={{ marginBottom: 5 }} />
+                            onChange={(valor) => { setfiltrosBusca({ ...filtrosBusca, descricao: valor }) }} />
+                        <Select
+                            valor={filtrosBusca.usuarioId}
+                            valores={professores}
+                            label='Professor'
+                            onChange={(valor: string) => { setfiltrosBusca({ ...filtrosBusca, usuarioId: valor }) }} />
+                        <DateInput
+                            data={dataInicial}
+                            label="Data inícial"
+                            onChange={(data: Date) => setDataInicial(data)}
+                        />
+                        <DateInput
+                            data={dataFinal}
+                            label="Data final"
+                            onChange={(data: Date) => setDataFinal(data)}
+                        />
                     </View>
                 </View>
-                <View>
-                    <Button onClick={() => pesquisar(filtrosBusca)} style={{ marginBottom: 5 }} carregando={pesquisando}>Aplicar filtros</Button>
-                    <Button onClick={() => setFiltroVisivel(false)} corSecundaria={true} desabilitado={pesquisando}>Voltar</Button>
+                <View style={{ justifyContent: 'center', paddingTop: 10, alignItems: 'center' }}>
+                    <Button
+                        onClick={() => pesquisar(filtrosBusca)}
+                        style={{ marginBottom: 5 }}
+                        carregando={pesquisando}>
+                        Aplicar filtros
+                    </Button>
+                    <Button
+                        onClick={() => setFiltroVisivel(false)}
+                        corSecundaria={true}
+                        desabilitado={pesquisando}>
+                        Voltar
+                    </Button>
                 </View>
             </CustomModal>
             <ModalConfirmacao
                 titulo='Remover postagem'
-                pergunta='Confirma a remoção da postagem?'
+                pergunta={`Confirma a remoção da postagem com código ${idRemocao}?`}
                 acao={() => removerPostagem()}
                 visivel={modalRemocao}
                 setVisivel={setModalRemocao}
                 carregando={removendo} />
+            <Snackbar
+                visible={mensagemVisivel}
+                onDismiss={() => setMensagemVisivel(false)}
+                duration={2000}
+                wrapperStyle={{ bottom: 50 }}
+                style={{ backgroundColor: '#333' }}
+            >
+                {mensagem}
+            </Snackbar>
         </Conteiner>
     );
 };

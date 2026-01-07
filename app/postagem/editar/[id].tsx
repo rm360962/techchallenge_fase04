@@ -49,6 +49,8 @@ const EditarPostagem = () => {
             descricao: descricao.valor,
         });
 
+        setEditando(false);
+        
         if(erros) {
             let mensagemPadrao = `O seguintes erros foram encontrados ao editar a postagem: `;
             const mensagemErros = erros.map(item => item.mensagem).join(', ');
@@ -84,6 +86,13 @@ const EditarPostagem = () => {
         <Conteiner>
             <Header titulo="Edição de postagem" voltar={() => { router.push('postagem') }}/>
             <View style={{ width: '100%', height: '77%', padding: 20 }}>
+                <Input 
+                    valor={id}
+                    titulo="Código"
+                    onChange={() => { } }
+                    desabilitado={true} 
+                    placeholder={""}                
+                />
                 <Input
                     valor={titulo.valor}
                     titulo="Título"

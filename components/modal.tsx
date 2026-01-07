@@ -1,20 +1,24 @@
 import { Modal, Portal } from 'react-native-paper';
 import { TCustomModalProps } from '../types/TComponentProps';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, ScrollView } from 'react-native';
 
-export const CustomModal = ({ titulo, visivel, children }: TCustomModalProps) => {
+export const CustomModal = ({ titulo, visivel, children, altura }: TCustomModalProps) => {
     return (
         <Portal>
             <Modal
                 visible={visivel}
-                contentContainerStyle={styles.modalCard}
+                contentContainerStyle={altura ? {...styles.modalCard, height: altura} : {...styles.modalCard, minHeight: '65%'}}
             >
                 <View style={styles.tituloConteiner}>
                     <Text style={styles.titulo}>{titulo}</Text>
                 </View>
-                <View style={styles.conteudo}>
+                <ScrollView 
+                    style={styles.scroll} 
+                    contentContainerStyle={styles.scrollContent}
+                    showsVerticalScrollIndicator={true}
+                >
                     {children}
-                </View>
+                </ScrollView>
             </Modal>
         </Portal>
     );
@@ -26,6 +30,7 @@ const styles = StyleSheet.create({
         margin: 20,      
         padding: 20,     
         borderRadius: 10,
+        maxHeight: '90%'
     },
     tituloConteiner: {
         justifyContent: 'center',
@@ -36,7 +41,10 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: 'bold',
     },
-    conteudo: {
-        alignItems: 'center',
+    scroll: {
+        flex: 1, 
+    },
+    scrollContent: {
+        paddingBottom: 10,
     }
 });

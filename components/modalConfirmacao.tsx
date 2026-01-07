@@ -5,11 +5,11 @@ import { TModalConfirmacao } from "../types/TComponentProps";
 
 const ModalConfirmacao = ({ titulo, pergunta, visivel, setVisivel, acao, carregando }: TModalConfirmacao) => {
     return (
-        <CustomModal titulo={titulo} visivel={visivel}>
-            <View style={{ paddingBottom: 15 }}>
-                <Text style={{ fontSize: 15 }}>{pergunta}</Text>
+        <CustomModal titulo={titulo} visivel={visivel} altura={230}>
+            <View style={{ paddingBottom: 15, alignItems: 'center', width: '100%' }}>
+                <Text style={{ fontSize: 16 }}>{pergunta}</Text>
             </View>
-            <View>
+            <View style={{ width: '100%', alignItems: 'center'}}>
                 <Button
                     onClick={() => acao()}
                     style={{ borderRadius: 0, marginBottom: 5 }}

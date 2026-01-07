@@ -6,14 +6,14 @@ import { Input } from "../../components/input";
 import { Button } from "../../components/button";
 import { PostagemService } from "../../service/postagem.service";
 import { Snackbar } from "react-native-paper";
+import { router } from "expo-router";
 
 const CadastrarPostagem = () => {
     const [cadastrando, setCadastrando] = useState(false);
     const [titulo, setTitulo] = useState({ valor: '', erro: '' });
     const [descricao, setDescricao] = useState({ valor: '', erro: '' });
-
     const [visivel, setVisivel] = useState(false);
-    const [mensagemErro, setMensagemErro] = useState("");
+    const [mensagem, setMensagem] = useState("");
 
     const postagemService = new PostagemService();
 
@@ -22,7 +22,7 @@ const CadastrarPostagem = () => {
     const cadastrarPostagem = async () => {
         const cadastroInvalido = validarCadastro();
 
-        if(cadastroInvalido) {
+        if (cadastroInvalido) {
             return;
         }
 
@@ -33,16 +33,23 @@ const CadastrarPostagem = () => {
             descricao: descricao.valor
         });
 
-        setCadastrando(false);
-
         if (erros) {
             let mensagemPadrao = `O seguintes erros foram encontrados ao cadastrar a postagem: `;
             const mensagemErros = erros.map(item => item.mensagem).join(', ');
-            mostrarErro(`${mensagemPadrao}${mensagemErros}`);
+            mostrarMensagem(`${mensagemPadrao}${mensagemErros}`);
             return;
         }
 
-        console.log('Cadastrando postagem');
+        mostrarMensagem('Postagem cadastrada com sucesso');
+
+        setTimeout(() => {
+            setCadastrando(false);
+
+            router.push({
+                pathname: "postagem/editar/[id]",
+                params: { id: postagem.id }
+            });
+        }, 2000);
     };
 
     const validarCadastro = () => {
@@ -61,8 +68,8 @@ const CadastrarPostagem = () => {
         return invalido;
     };
 
-    const mostrarErro = (texto: string) => {
-        setMensagemErro(texto);
+    const mostrarMensagem = (mensagem: string) => {
+        setMensagem(mensagem);
         setVisivel(true);
     };
 
@@ -77,7 +84,7 @@ const CadastrarPostagem = () => {
                     onChange={(valor) => { setTitulo({ valor: valor, erro: '' }) }}
                     erro={titulo.erro != null && titulo.erro.length > 0}
                     mensagemErro={titulo.erro}
-                    style={{ width: '100%'}}
+                    style={{ width: '100%' }}
                 />
                 <Input
                     valor={descricao.valor}
@@ -88,7 +95,7 @@ const CadastrarPostagem = () => {
                     mensagemErro={descricao.erro}
                     multiplasLinhas={true}
                     numeroLinhas={10}
-                    style={{ width: '100%', height: screenHeight * 0.3}}
+                    style={{ width: '100%', height: screenHeight * 0.3 }}
                 />
             </View>
             <View style={{ height: '10%' }}>
@@ -97,11 +104,11 @@ const CadastrarPostagem = () => {
             <Snackbar
                 visible={visivel}
                 onDismiss={() => setVisivel(false)}
-                duration={5000} 
+                duration={3000}
                 wrapperStyle={{ bottom: 50 }}
                 style={{ backgroundColor: '#333' }}
             >
-                {mensagemErro}
+                {mensagem}
             </Snackbar>
         </Conteiner>
     );

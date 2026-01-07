@@ -6,7 +6,7 @@ export const Button = ({ desabilitado, onClick, style, corSecundaria, carregando
         <PaperButton 
             disabled={desabilitado || carregando} 
             onPress={onClick} 
-            style={{ ...style, backgroundColor: corSecundaria ? 'gray' : '#03318C', width: 200, justifyContent: 'center'}}
+            style={{ ...style, backgroundColor: corSecundaria ? 'gray' : '#03318C', width: 200, justifyContent: 'center', borderRadius: 5}}
             labelStyle={{ color: 'white', fontSize: 15, fontWeight: 'semibold'}}
             loading={carregando}>
             {!carregando && children}

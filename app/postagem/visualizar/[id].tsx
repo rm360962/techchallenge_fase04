@@ -26,10 +26,10 @@ const VisualizarPostagem = () => {
         <Conteiner>
             <Header titulo={postagem.titulo} />
             <ScrollView style={{ padding: 10 }}>
-                <Text style={{ fontSize: 18 }}>{postagem.descricao}</Text>
+                <Text style={{ fontSize: 18, fontWeight: 'bold' }}>{postagem.descricao}</Text>
             </ScrollView>
             <View>
-                <Text style={{ fontWeight: 'semibold'}}>Postado por {postagem?.usuario?.nome} as {postagem.dataInclusao}</Text>
+                <Text style={{ fontWeight: 'bold', fontSize: 15}}>Postado por {postagem?.usuario?.nome} as {postagem.dataInclusao}</Text>
             </View>
         </Conteiner>
     );

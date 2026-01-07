@@ -48,12 +48,10 @@ export const Input = ({
 const styles = StyleSheet.create({
     wrapper: {
         width: '100%',
-        marginBottom: 10,
         alignItems: 'center'
     },
     mensagemErro: {
         fontSize: 16,
         color: 'red',
-        marginTop: 4,
     }
 });
