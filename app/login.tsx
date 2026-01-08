@@ -40,10 +40,10 @@ const Login = () => {
             return;
         }
 
-        contextoSessao.sessao = {
+        contextoSessao.setSessao({
             usuarioLogado: usuarioLogado,
             token: tokenJwt,
-        };
+        });
 
         router.replace('postagem');
     };

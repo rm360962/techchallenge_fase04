@@ -46,10 +46,8 @@ const CadastrarPostagem = () => {
         setTimeout(() => {
             setCadastrando(false);
 
-            router.push({
-                pathname: "postagem/editar/[id]",
-                params: { id: postagem.id }
-            });
+            
+            router.push(`/postagem/editar/${postagem.id}`);
         }, 2000);
     };
 

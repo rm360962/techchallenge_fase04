@@ -1,7 +1,7 @@
 
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { Conteiner } from '../../components/conteiner';
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Button } from '../../components/button';
 import { CustomModal } from '../../components/modal';
 import { Input } from '../../components/input';
@@ -16,6 +16,7 @@ import { UsuarioService } from '../../service/usuario.service';
 import { Option } from 'react-native-paper-dropdown';
 import Select from '../../components/select';
 import DateInput from '../../components/dateInput';
+import { ContextoSessao } from '../../contextoSessao';
 
 const Postagem = () => {
     const buscaPostagemInicial: TBuscaPostagem = {
@@ -43,6 +44,9 @@ const Postagem = () => {
 
     const postagemService = new PostagemService();
     const usuarioService = new UsuarioService();
+    const contexto = useContext(ContextoSessao);
+    const permissaoEdicao = contexto.usuarioPossuiPermissao('editar_postagem');
+    const permissaoRemocao = contexto.usuarioPossuiPermissao('remover_postagem');
 
     const router = useRouter();
 
@@ -66,11 +70,11 @@ const Postagem = () => {
     const pesquisar = async (payload: TBuscaPostagem) => {
         setPesquisando(true);
 
-        if(dataInicial != null) {
+        if (dataInicial != null) {
             payload.dataInclusaoInicio = formatarData(dataInicial);
         }
 
-        if(dataFinal != null) {
+        if (dataFinal != null) {
             payload.dataInclusaoFim = formatarData(dataFinal);
         }
 
@@ -152,7 +156,7 @@ const Postagem = () => {
         const ano = data.getFullYear();
         const mes = String(data.getMonth() + 1).padStart(2, '0');
         const dia = String(data.getDate()).padStart(2, '0');
-    
+
         return `${ano}-${mes}-${dia}`;
     };
     const buscarProfessores = async () => {
@@ -219,20 +223,22 @@ const Postagem = () => {
                         key={item.id}
                         postagem={item}
                         tratarClique={visualizarPostagem}
-                        visualizar={visualizarPostagem}
                         editar={editarPostagem}
                         remover={confirmarRemocaoPostagem}
-                        mostrarAcoes={true}
+                        permissaoEdicao={permissaoEdicao}
+                        permissaoRemocao={permissaoRemocao}
                     />
                 ))}
             </ScrollView>
-            <FAB
-                icon="plus"
-                style={styles.fab}
-                label="Novo"
-                onPress={() => router.push('/postagem/cadastrar')}
-                color="white"
-            />
+            {contexto.usuarioPossuiPermissao('cadastrar_postagem') && (
+                <FAB
+                    icon="plus"
+                    style={styles.fab}
+                    label="Novo"
+                    onPress={() => router.push('/postagem/cadastrar')}
+                    color="white"
+                />
+            )}
             <CustomModal titulo='Filtrar postagens' visivel={filtroVisivel}>
                 <View>
                     <View>

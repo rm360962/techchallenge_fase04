@@ -44,8 +44,6 @@ const CadastrarUsuario = () => {
             senha: senha.valor
         });
 
-        setCadastrando(false);
-
         if (erros) {
             let mensagemPadrao = `O seguintes erros foram encontrados ao cadastrar a postagem: `;
             const mensagemErros = erros.map(item => item.mensagem).join(', ');
@@ -54,15 +52,12 @@ const CadastrarUsuario = () => {
             return;
         }
 
-        setMensagem('Usuário cadastrado com sucesso');
+        mostrarMensagem('Usuário cadastrado com sucesso');
 
         setTimeout(() => {
             setCadastrando(false);
 
-            router.push({
-                pathname: "usuario/editar/[id]",
-                params: { id: usuario.id }
-            });
+            router.push(`/usuario/editar/${usuario.id}`);
         }, 2000);
     };
 

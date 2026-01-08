@@ -40,11 +40,11 @@ export type TCustomModalProps = {
 
 export type TPostagemCardProps = {
     tratarClique: Function,
-    visualizar: Function,
     editar: Function,
     remover: Function,
     postagem: TPostagem,
-    mostrarAcoes: boolean
+    permissaoEdicao: boolean,
+    permissaoRemocao: boolean,
 };
 
 export type THeaderProps = {

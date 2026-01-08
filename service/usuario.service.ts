@@ -126,7 +126,7 @@ export class UsuarioService {
         if(!usuario.senha || usuario.senha?.length === 0) {
             delete usuario['senha'];
         }
-        
+
         try {
             const resposta = await clienteAxios({
                 method: 'put',
@@ -157,7 +157,7 @@ export class UsuarioService {
                     token: this.contextoSessao.sessao.token
                 },
             });
-
+            console.log(resposta);
             return resposta.status === 200;
         } catch (erro) {
             console.log('Erro ao remover o usuario', erro);

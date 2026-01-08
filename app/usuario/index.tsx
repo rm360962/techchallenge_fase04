@@ -2,7 +2,7 @@ import { View, Text, StyleSheet, ScrollView } from "react-native";
 import { Conteiner } from "../../components/conteiner";
 import { Input } from "../../components/input";
 import { Avatar, DataTable, FAB, IconButton, Snackbar } from "react-native-paper";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { CustomModal } from "../../components/modal";
 import { TBuscaUsuario, TUsuario } from "../../types/TUsuario";
 import { Button } from "../../components/button";
@@ -11,6 +11,7 @@ import { router } from "expo-router";
 import ModalConfirmacao from "../../components/modalConfirmacao";
 import { Option } from "react-native-paper-dropdown";
 import Select from "../../components/select";
+import { ContextoSessao } from "../../contextoSessao";
 
 const Usuario = () => {
     const usuarioBuscaInicial: TBuscaUsuario = {
@@ -36,6 +37,11 @@ const Usuario = () => {
     const [mensagemVisivel, setMensagemVisivel] = useState(false);
 
     const usuarioService = new UsuarioService();
+    const contexto = useContext(ContextoSessao);
+    const permissaoEdicao = contexto.usuarioPossuiPermissao('editar_usuario');
+    const permissaoCadastro = contexto.usuarioPossuiPermissao('cadastrar_usuario');
+    const permissaoRemocao = contexto.usuarioPossuiPermissao('remover_usuario');
+
     const opcoesAtivo = [
         {
             label: 'Sim',
@@ -63,10 +69,6 @@ const Usuario = () => {
     useEffect(() => {
         pesquisar(filtrosBuscaAtiva);
     }, [filtrosBuscaAtiva]);
-
-    const nomeChanged = (valor: string) => {
-
-    };
 
     const buscarCategoriasUsuario = async () => {
         const { erro, categorias } = await usuarioService.buscarCategoriasUsuario();
@@ -172,7 +174,7 @@ const Usuario = () => {
                             />
                         </View>
                         <View style={{ width: '10%' }}>
-                            <View style={{ height: 7}}></View>
+                            <View style={{ height: 7 }}></View>
                             <IconButton
                                 icon="filter-variant"
                                 iconColor="white"
@@ -194,59 +196,67 @@ const Usuario = () => {
                 <Text style={styles.subtitulo}>Usuários encontrados</Text>
             </View>
             <ScrollView horizontal>
-                <DataTable style={{ width: 2000 }}>
-                    <DataTable.Header>
-                        <DataTable.Title><Text style={styles.dataTableLabel}>Ações</Text></DataTable.Title>
-                        <DataTable.Title><Text style={styles.dataTableLabel}>Código</Text></DataTable.Title>
-                        <DataTable.Title><Text style={styles.dataTableLabel}>Nome</Text></DataTable.Title>
-                        <DataTable.Title><Text style={styles.dataTableLabel}>E-mail</Text></DataTable.Title>
-                        <DataTable.Title><Text style={styles.dataTableLabel}>Login</Text></DataTable.Title>
-                        <DataTable.Title><Text style={styles.dataTableLabel}>Categória</Text></DataTable.Title>
-                        <DataTable.Title><Text style={styles.dataTableLabel}>Ativo</Text></DataTable.Title>
-                        <DataTable.Title><Text style={styles.dataTableLabel}>Data inclusão</Text></DataTable.Title>
-                        <DataTable.Title><Text style={styles.dataTableLabel}>Usuário inclusão</Text></DataTable.Title>
-                        <DataTable.Title><Text style={styles.dataTableLabel}>Data alteração</Text></DataTable.Title>
-                        <DataTable.Title><Text style={styles.dataTableLabel}>Usuário alteração</Text></DataTable.Title>
-                    </DataTable.Header>
-                    {usuarios.map((usuario) => {
-                        return (
-                            <DataTable.Row key={usuario.id}>
-                                <DataTable.Cell>
-                                    <IconButton
-                                        icon="pencil"
-                                        mode="contained-tonal"
-                                        onPress={() => editar(usuario.id)}
-                                        style={{ marginRight: 10 }}
-                                    />
-                                    <IconButton
-                                        icon="delete"
-                                        iconColor="red"
-                                        mode="contained-tonal"
-                                        onPress={() => confirmarRemocao(usuario.id)}
-                                    />
-                                </DataTable.Cell>
-                                <DataTable.Cell><Text style={styles.dataTableLabel}>{usuario.id}</Text></DataTable.Cell>
-                                <DataTable.Cell><Text style={styles.dataTableLabel}>{usuario.nome}</Text></DataTable.Cell>
-                                <DataTable.Cell><Text style={styles.dataTableLabel}>{usuario.email}</Text></DataTable.Cell>
-                                <DataTable.Cell><Text style={styles.dataTableLabel}>{usuario.login}</Text></DataTable.Cell>
-                                <DataTable.Cell><Text style={styles.dataTableLabel}>{usuario.categoria?.nome}</Text></DataTable.Cell>
-                                <DataTable.Cell><Text style={styles.dataTableLabel}>{usuario.ativo ? 'Sim' : 'Não'}</Text></DataTable.Cell>
-                                <DataTable.Cell><Text style={styles.dataTableLabel}>{usuario.dataInclusao}</Text></DataTable.Cell>
-                                <DataTable.Cell><Text style={styles.dataTableLabel}>{usuario.usuarioInclusao}</Text></DataTable.Cell>
-                                <DataTable.Cell><Text style={styles.dataTableLabel}>{usuario.dataAlteracao}</Text></DataTable.Cell>
-                                <DataTable.Cell><Text style={styles.dataTableLabel}>{usuario.usuarioAlteracao}</Text></DataTable.Cell>
-                            </DataTable.Row>
-                        )
-                    })}
-                </DataTable>
+                <ScrollView>
+                    <DataTable style={{ width: 2000 }}>
+                        <DataTable.Header>
+                            <DataTable.Title><Text style={styles.dataTableLabel}>Ações</Text></DataTable.Title>
+                            <DataTable.Title><Text style={styles.dataTableLabel}>Código</Text></DataTable.Title>
+                            <DataTable.Title><Text style={styles.dataTableLabel}>Nome</Text></DataTable.Title>
+                            <DataTable.Title><Text style={styles.dataTableLabel}>E-mail</Text></DataTable.Title>
+                            <DataTable.Title><Text style={styles.dataTableLabel}>Login</Text></DataTable.Title>
+                            <DataTable.Title><Text style={styles.dataTableLabel}>Categoria</Text></DataTable.Title>
+                            <DataTable.Title><Text style={styles.dataTableLabel}>Ativo</Text></DataTable.Title>
+                            <DataTable.Title><Text style={styles.dataTableLabel}>Data inclusão</Text></DataTable.Title>
+                            <DataTable.Title><Text style={styles.dataTableLabel}>Usuário inclusão</Text></DataTable.Title>
+                            <DataTable.Title><Text style={styles.dataTableLabel}>Data alteração</Text></DataTable.Title>
+                            <DataTable.Title><Text style={styles.dataTableLabel}>Usuário alteração</Text></DataTable.Title>
+                        </DataTable.Header>
+                        {usuarios.map((usuario) => {
+                            return (
+                                <DataTable.Row key={usuario.id}>
+                                    <DataTable.Cell>
+                                        {(permissaoEdicao && usuario.ativo) && (
+                                            <IconButton
+                                                icon="pencil"
+                                                mode="contained-tonal"
+                                                onPress={() => editar(usuario.id)}
+                                                style={{ marginRight: 10 }}
+                                            />
+                                        )}
+                                        {(permissaoRemocao && usuario.ativo) && (
+                                            <IconButton
+                                                icon="delete"
+                                                iconColor="red"
+                                                mode="contained-tonal"
+                                                onPress={() => confirmarRemocao(usuario.id)}
+                                            />
+                                        )}
+                                    </DataTable.Cell>
+                                    <DataTable.Cell><Text style={styles.dataTableLabel}>{usuario.id}</Text></DataTable.Cell>
+                                    <DataTable.Cell><Text style={styles.dataTableLabel}>{usuario.nome}</Text></DataTable.Cell>
+                                    <DataTable.Cell><Text style={styles.dataTableLabel}>{usuario.email}</Text></DataTable.Cell>
+                                    <DataTable.Cell><Text style={styles.dataTableLabel}>{usuario.login}</Text></DataTable.Cell>
+                                    <DataTable.Cell><Text style={styles.dataTableLabel}>{usuario.categoria?.nome}</Text></DataTable.Cell>
+                                    <DataTable.Cell><Text style={styles.dataTableLabel}>{usuario.ativo ? 'Sim' : 'Não'}</Text></DataTable.Cell>
+                                    <DataTable.Cell><Text style={styles.dataTableLabel}>{usuario.dataInclusao}</Text></DataTable.Cell>
+                                    <DataTable.Cell><Text style={styles.dataTableLabel}>{usuario.usuarioInclusao}</Text></DataTable.Cell>
+                                    <DataTable.Cell><Text style={styles.dataTableLabel}>{usuario.dataAlteracao}</Text></DataTable.Cell>
+                                    <DataTable.Cell><Text style={styles.dataTableLabel}>{usuario.usuarioAlteracao}</Text></DataTable.Cell>
+                                </DataTable.Row>
+                            )
+                        })}
+                    </DataTable>
+                </ScrollView>
             </ScrollView>
-            <FAB
-                icon="plus"
-                style={styles.fab}
-                label="Novo"
-                onPress={() => router.push('/usuario/cadastrar')}
-                color="white"
-            />
+            {permissaoCadastro && (
+                <FAB
+                    icon="plus"
+                    style={styles.fab}
+                    label="Novo"
+                    onPress={() => router.push('/usuario/cadastrar')}
+                    color="white"
+                />
+            )}
             <CustomModal titulo='Filtrar usuários' visivel={filtroVisivel}>
                 <View>
                     <View>
