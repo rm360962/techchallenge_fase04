@@ -33,16 +33,16 @@ const RootLayout = () => {
                             screenOptions={{
                                 headerShown: false,
                             }}
-                            initialRouteName="login"
+                            initialRouteName="login/index"
                         >
-                            <Stack.Screen name="login" />
-                            <Stack.Screen name="/postagem/index" />
-                            <Stack.Screen name="/postagem/visualizar/[id]" />
-                            <Stack.Screen name="/postagem/editar/[id]" />
-                            <Stack.Screen name="/postagem/cadastrar"/>
-                            <Stack.Screen name="/usuario/index" />
-                            <Stack.Screen name="/usuario/cadastrar" />
-                            <Stack.Screen name="/usuario/editar[id]" />
+                            <Stack.Screen name="login/index" />
+                            <Stack.Screen name="postagem/index" />
+                            <Stack.Screen name="postagem/visualizar/[id]" />
+                            <Stack.Screen name="postagem/editar/[id]" />
+                            <Stack.Screen name="postagem/cadastrar"/>
+                            <Stack.Screen name="usuario/index" />
+                            <Stack.Screen name="usuario/cadastrar" />
+                            <Stack.Screen name="usuario/editar/[id]" />
                         </Stack>
                     </View>
                     {visualizarNavegacao && (

@@ -1,10 +1,10 @@
-import { View, Text, StyleSheet, Alert } from 'react-native';
-import { Conteiner } from '../components/conteiner';
+import { View, Text, StyleSheet } from 'react-native';
+import { Conteiner } from '../../components/conteiner';
 import { useContext, useState } from 'react';
-import { Input } from '../components/input';
-import { Button } from '../components/button';
-import { LoginService } from '../service/login.service';
-import { ContextoSessao } from '../contextoSessao';
+import { Input } from '../../components/input';
+import { Button } from '../../components/button';
+import { LoginService } from '../../service/login.service';
+import { ContextoSessao } from '../../contextoSessao';
 import { useRouter } from 'expo-router';
 import { Snackbar } from 'react-native-paper';
 

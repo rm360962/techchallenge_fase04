@@ -313,7 +313,7 @@ const Usuario = () => {
             </CustomModal>
             <ModalConfirmacao
                 titulo='Remover usuário'
-                pergunta='Confirma a remoção do usuário?'
+                pergunta={`Confirma a remoção do usuário com código ${idRemocao}?`}
                 acao={() => removerUsuario()}
                 visivel={modalRemocao}
                 setVisivel={setModalRemocao}
