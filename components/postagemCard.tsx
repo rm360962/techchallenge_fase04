@@ -21,6 +21,7 @@ export const PostagemCard = ({
                     <IconButton
                         icon="pencil"
                         mode="contained-tonal"
+                        size={30}
                         onPress={() => editar(postagem.id)}
                     />
                 )}
@@ -29,6 +30,7 @@ export const PostagemCard = ({
                         icon="delete"
                         iconColor="red"
                         mode="contained-tonal"
+                        size={30}
                         onPress={() => remover(postagem.id)}
                     />
                 )}

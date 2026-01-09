@@ -216,20 +216,25 @@ const Usuario = () => {
                                 <DataTable.Row key={usuario.id}>
                                     <DataTable.Cell>
                                         {(permissaoEdicao && usuario.ativo) && (
-                                            <IconButton
-                                                icon="pencil"
-                                                mode="contained-tonal"
-                                                onPress={() => editar(usuario.id)}
-                                                style={{ marginRight: 10 }}
-                                            />
+                                            <View style={{ marginRight: 10 }}>
+                                                <IconButton
+                                                    icon="pencil"
+                                                    size={30}
+                                                    mode="contained-tonal"
+                                                    onPress={() => editar(usuario.id)}
+                                                />
+                                            </View>
                                         )}
                                         {(permissaoRemocao && usuario.ativo) && (
-                                            <IconButton
-                                                icon="delete"
-                                                iconColor="red"
-                                                mode="contained-tonal"
-                                                onPress={() => confirmarRemocao(usuario.id)}
-                                            />
+                                            <View>
+                                                <IconButton
+                                                    icon="delete"
+                                                    size={30}
+                                                    iconColor="red"
+                                                    mode="contained-tonal"
+                                                    onPress={() => confirmarRemocao(usuario.id)}
+                                                />
+                                            </View>
                                         )}
                                     </DataTable.Cell>
                                     <DataTable.Cell><Text style={styles.dataTableLabel}>{usuario.id}</Text></DataTable.Cell>
@@ -282,7 +287,7 @@ const Usuario = () => {
                             valor={filtrosBusca.login}
                             titulo='Login'
                             placeholder='Digite o login a ser buscado'
-                            onChange={(valor) => { setfiltrosBusca({ ...filtrosBusca, email: valor }) }}
+                            onChange={(valor) => { setfiltrosBusca({ ...filtrosBusca, login: valor }) }}
                             style={{ marginBottom: 5 }} />
                         <Select
                             valor={filtrosBusca.categoriaId}
